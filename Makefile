@@ -1,4 +1,4 @@
-NAME = irc
+NAME = ircserv
 
 SRC = $(wildcard *.cpp)
 
