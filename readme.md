@@ -19,7 +19,7 @@ commands (operator): kick, invite, topic(change or view)
 mode: (i: invite only, t: change topic permission, k: set/change/remove channel passowrd, o: give/take privilege, l: channel user limit)
 mode i (yes/no, 1/0), optionnal channel name? or affects current channel
 mode t : same(yes/no) same(arg or current)
-mode k : newpassword for set, empty for remove
+mode k : newpassword for set, empty for remove OR just "mode k" and then prompt user to enter password and then confirm
 mode o : user_to_change, (yes/no)
 mode l : n to set limit, empty to remove
 
@@ -39,3 +39,18 @@ create channel???
 where to keep track of privilege? each user has a list of channel he is operator in? or each channel has a list of user that are operators in it?
 what happens if a user leaves a channel? keep track of privilege or lose it?
 who can become operator? who can create a new channel? delete channel? channel-wide privilege vs server-wide privilege
+
+each channel keeps track of active users connected, echo all received lines to all users in that channel
+
+
+3 classes: server, channel, user (??)
+
+handle encryption, password safety?
+handle internet connection or just local on 1 machine?
+difference between some client and a bare terminal doing 'nc'?
+
+- ft_split received line
+- if first word starts with '/' then process command
+- otherwise just send line to channel
+
+use dynamic arrays, make our own ft_realloc in cpp?
