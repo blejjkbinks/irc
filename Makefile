@@ -4,7 +4,7 @@ SRC = $(wildcard *.cpp)
 #SRC = main.cpp etc
 
 CC = c++
-CFLAGS = -Werror -Wextra -Wall -std=c++98 -Ihdr
+#CFLAGS = -Werror -Wextra -Wall -std=c++98 -Ihdr
 
 #SRC_DIR = src
 SRC_DIR = .
@@ -17,6 +17,7 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $@
 	@echo ./$(NAME)
+	@./$(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@

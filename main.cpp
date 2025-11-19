@@ -15,16 +15,17 @@
 #include <poll.h>
 
 #define BACKLOG 16
-#define MAX_CLIENTS 100
 #define BUFF_SIZE 4000
+
+#include "Server.hpp"
 
 static volatile bool g_running = true;
 
-struct Client
-{
-	int	fd;
-	std::string	buffer;
-};
+// struct Client
+// {
+// 	int	fd;
+// 	std::string	buffer;
+// };
 
 static int	ft_make_listen_socket(int port);
 static void	ft_accept_new_clients(int listen_fd, pollfd *pfds, Client *clients, int &nfds);
@@ -35,14 +36,27 @@ void		handle_sigint(int);
 
 int	main(int argc, char **argv)
 {
+	int		port;
+	std::string	password;
 	if (argc != 3)
 	{
-		std::cerr << "usage: " << argv[0] << " <port> <password>" << std::endl;
-		return (1);
+		//std::cerr << "usage: " << argv[0] << " <port> <password>" << std::endl;
+		//return (1);
+		port = 6667;
+		password = "password";
 	}
-	int	port = std::atoi(argv[1]);
-	std::string	password(argv[2]);
+	else
+	{
+		port = std::atoi(argv[1]);
+		password = argv[2];
+	}
 	signal(SIGINT, handle_sigint);
+
+	//
+	// Server	s(port, password);
+	// Channel c;
+	// s.addChannel(c);
+	//
 
 	int listen_fd = ft_make_listen_socket(port);
 	if (listen_fd == -1)
@@ -51,13 +65,18 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 
+	std::cout << "max_clients: " << Client::MAX_ClIENTS << std::endl;
+
 	pollfd pfds[MAX_CLIENTS + 1];
 	Client clients[MAX_CLIENTS];
 	int	nfds = 1;
 	pfds[0].fd = listen_fd;
 	pfds[0].events = POLLIN;
 	for (int i = 0; i < MAX_CLIENTS; ++i)
-		clients[i].fd = -1;
+		clients[i].setFd(-1);
+
+
+	std::cout << "hasnt segfaulted yet" << std::endl;
 
 	while (g_running)
 	{
@@ -143,7 +162,7 @@ static void	ft_accept_new_clients(int listen_fd, pollfd *pfds, Client *clients, 
 			pfds[nfds].fd = client_fd;
 			pfds[nfds].events = POLLIN;
 			pfds[nfds].revents = 0;
-			clients[nfds - 1].fd = client_fd;
+			clients[nfds - 1].setFd(client_fd);
 			clients[nfds - 1].buffer = "";
 			++nfds;
 			std::cout << "client connected to slot " << nfds - 1 << std::endl;
@@ -191,7 +210,7 @@ static void	ft_handle_client_io(pollfd *pfds, Client *clients, int i)
 				std::cout << "client disconnected from slot " << i << std::endl;
 				close(fd);
 				pfds[i].fd = -1;
-				clients[i - 1].fd = -1;
+				clients[i - 1].setFd(-1);
 			}
 		}
 	}
