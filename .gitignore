@@ -1,4 +1,7 @@
 ircserv
 obj
-gpt*
+
 .vscode
+gpt*
+*.py
+test*

@@ -54,3 +54,14 @@ difference between some client and a bare terminal doing 'nc'?
 - otherwise just send line to channel
 
 use dynamic arrays, make our own ft_realloc in cpp?
+
+
+
+focus:
+
+server has an array of channels and an array of clients
+test adding and removing channels
+test connecting and disconnecting clients
+server terminal reads its stdin for debug requests
+
+lookup channel and clients?
