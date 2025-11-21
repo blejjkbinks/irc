@@ -65,3 +65,13 @@ test connecting and disconnecting clients
 server terminal reads its stdin for debug requests
 
 lookup channel and clients?
+
+
+
+next steps:
+
+force user to auth, username and nick cant be empty
+implement command logic
+
+figure out irc standards,
+format strings sent back to client to make it readable for legacy clients

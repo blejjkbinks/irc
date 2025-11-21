@@ -4,7 +4,7 @@ SRC = $(wildcard *.cpp)
 #SRC = main.cpp etc
 
 CC = c++
-#CFLAGS = -Werror -Wextra -Wall -std=c++98 -Ihdr
+CFLAGS = -Werror -Wextra -Wall -std=c++98 -Ihdr
 
 #SRC_DIR = src
 SRC_DIR = .
