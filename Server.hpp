@@ -20,8 +20,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-class Server {
-public:
+class Server
+{
 private:
 	int _listen_port;
 	std::string _password;
