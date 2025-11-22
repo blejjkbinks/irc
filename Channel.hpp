@@ -5,7 +5,8 @@
 #include <iostream>
 #include <string>
 
-class Channel {
+class Channel
+{
 public:
 	static const int MAX_CHANNELS = 5;
 

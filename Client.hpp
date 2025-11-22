@@ -6,7 +6,8 @@
 
 class Server;
 
-class Client {
+class Client
+{
 private:
 	std::string _name;
 	std::string _nick;

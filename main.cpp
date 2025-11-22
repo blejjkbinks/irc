@@ -2,13 +2,17 @@
 #include <cstdlib>
 #include <iostream>
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	int port;
 	std::string password;
-	if (argc != 3) {
+	if (argc != 3)
+	{
 		port = 6667;
 		password = "password";
-	} else {
+	}
+	else
+	{
 		port = std::atoi(argv[1]);
 		password = argv[2];
 	}
