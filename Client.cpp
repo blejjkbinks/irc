@@ -66,7 +66,16 @@ void Client::_check_password(std::string line, Server &server)
 	}
 }
 
-void Client::process_line(std::string line, Server &server)
+static int cmdToCode(const std::string& s)
+{
+    const char* cmd[8] = {"JOIN", "PART", "KICK", "INVITE", "TOPIC", "MODE", "AUTH", "HELP"};
+    for (int i = 0; i < 8; ++i)
+        if (s == cmd[i])
+            return (i);
+    return (-1);
+}
+
+void Client::processLine(std::string line, Server &server)
 {
 	if (!_is_authenticated)
 	{
@@ -75,28 +84,33 @@ void Client::process_line(std::string line, Server &server)
 	}
 
 	size_t first_space = line.find(' ');
-	std::string command = (first_space == std::string::npos) ? line : line.substr(0, first_space);
-
-	if (command == "JOIN")
-		_join(line, server);
-	else if (command == "PART")
-		_part(line, server);
-	else if (command == "KICK")
-		_kick(line, server);
-	else if (command == "INVITE")
-		_invite(line, server);
-	else if (command == "TOPIC")
-		_topic(line, server);
-	else if (command == "MODE")
-		_mode(line, server);
-	else if (command == "AUTH")
-		_auth(line, server);
-	else if (command == "HELP")
-		_help(line, server);
+	std::string command;
+	if (first_space == std::string::npos)
+    	command = line;
 	else
+    	command = line.substr(0, first_space);
+
+	switch (cmdToCode(command))
 	{
-		std::string reply = "sending back [" + line + "]\r\n";
-		send(_fd, reply.c_str(), reply.size(), 0);
+		case JOIN: _join(line, server);
+            break ;
+		case PART: _part(line, server);
+            break ;
+		case KICK: _kick(line, server);
+            break ;
+		case INVITE: _invite(line, server);
+            break ;
+		case TOPIC: _topic(line, server);
+            break ;
+		case MODE: _mode(line, server);
+            break ;
+		case AUTH: _auth(line, server);
+            break ;
+		case HELP: _help(line, server);
+            break ;
+		default:
+			std::string reply = "sending back [" + line + "]\r\n";
+			send(_fd, reply.c_str(), reply.size(), 0);
 	}
 }
 

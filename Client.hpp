@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 
+enum CMD {JOIN, PART, KICK, INVITE, TOPIC, MODE, AUTH, HELP}; 
+
 class Server;
 
 class Client
@@ -43,7 +45,7 @@ public:
 	bool isAuthenticated(void);
 	void setAuthenticated(bool v);
 
-	void process_line(std::string line, Server &server);
+	void processLine(std::string line, Server &server);
 };
 
 std::ostream &operator<<(std::ostream &o, Client &c);

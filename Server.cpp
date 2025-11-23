@@ -164,7 +164,7 @@ void Server::_handle_client_io(pollfd *pfds, int i)
 					line.erase(line.size() - 1);
 				std::cout << "received from " << i - 1 << ": " << line << std::endl;
 
-				_clients[i - 2].process_line(line, *this);
+				_clients[i - 2].processLine(line, *this);
 
 				b.erase(0, pos + 1);
 			}
