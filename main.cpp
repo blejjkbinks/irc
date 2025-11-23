@@ -1,24 +1,37 @@
 #include "Server.hpp"
-#include <cstdlib>
-#include <iostream>
+#include <stdexcept>
 
-int main(int argc, char **argv)
+void parsePortPassword(char *argv[], int &port, std::string &password)
 {
-	int port;
-	std::string password;
+	port = atoi(argv[1]);
+	password = argv[2];
+	if (port <= 0)
+		throw std::invalid_argument("invalid port");
+	if (password.empty())
+		throw std::invalid_argument("invalid password");
+}
+
+int main(int argc, char *argv[])
+{
 	if (argc != 3)
 	{
-		port = 6667;
-		password = "password";
+		std::cout << " usage : ./ircserv [port] [password]\n";
+		return (1);
 	}
-	else
+	
+	int port;
+	std::string password;
+	try
 	{
-		port = std::atoi(argv[1]);
-		password = argv[2];
+		parsePortPassword(argv, port, password);
+	}
+	catch (std::exception &e)
+	{
+		std::cout << e.what() << std::endl; 
+		return (1);
 	}
 
-	Server s(port, password);
-	s.start();
-
+	Server srv(port, password);
+	srv.start();
 	return (0);
 }
