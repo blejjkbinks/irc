@@ -75,3 +75,25 @@ implement command logic
 
 figure out irc standards,
 format strings sent back to client to make it readable for legacy clients
+
+
+
+handle pingpong
+send periodically, respond when questionned
+nc says broken pipe when server quits first
+password checker is too crude, only works for nc but needs rethinking for irssi
+numerics 001-004 for connection
+332
+353
+366
+
+notice
+join, part, quit
+privmsg
+cap ls/ cap end??
+
+https://datatracker.ietf.org/doc/html/rfc2812
+https://datatracker.ietf.org/doc/html/rfc1459
+https://defs.ircdocs.horse/defs/numerics.html
+https://www.rfc-editor.org/rfc/rfc2812.txt
+
