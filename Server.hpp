@@ -20,35 +20,36 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-class Server
-{
+class Server {
 private:
-	int _listen_port;
-	std::string _password;
-	Client _clients[Client::MAX_CLIENTS];
-	int _clients_n;
-	Channel _channels[Channel::MAX_CHANNELS];
-	int _channels_n;
+  int _listen_port;
+  std::string _password;
+  std::string _server_name;
+  Client _clients[Client::MAX_CLIENTS];
+  int _clients_n;
+  Channel _channels[Channel::MAX_CHANNELS];
+  int _channels_n;
 
-	int _make_listen_socket(int port);
-	void _accept_new_clients(int listen_fd, pollfd *pfds);
-	void _handle_client_io(pollfd *pfds, int i);
-	void _compact_fds(pollfd *pfds);
-	void _removeClientFromChannels(int fd);
-	void _handle_stdin(void);
+  int _make_listen_socket(int port);
+  void _accept_new_clients(int listen_fd, pollfd *pfds);
+  void _handle_client_io(pollfd *pfds, int i);
+  void _compact_fds(pollfd *pfds);
+  void _removeClientFromChannels(int fd);
+  void _handle_stdin(void);
 
 public:
-	Server(int port, std::string password);
-	Server(void);
-	Server(const Server &other);
-	Server &operator=(const Server &other);
-	~Server(void);
+  Server(int port, std::string password);
+  Server(void);
+  Server(const Server &other);
+  Server &operator=(const Server &other);
+  ~Server(void);
 
-	void start(void);
-	bool addChannel(Channel c);
-	void removeChannel(std::string name);
-	Channel *getChannel(std::string name);
-	std::string getPassword(void);
+  void start(void);
+  bool addChannel(Channel c);
+  void removeChannel(std::string name);
+  Channel *getChannel(std::string name);
+  std::string getPassword(void);
+  std::string getServerPrefix(void);
 };
 
 #endif
