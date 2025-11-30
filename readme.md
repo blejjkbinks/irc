@@ -97,3 +97,22 @@ https://datatracker.ietf.org/doc/html/rfc1459
 https://defs.ircdocs.horse/defs/numerics.html
 https://www.rfc-editor.org/rfc/rfc2812.txt
 
+
+known issues, to fix:
+
+sending back empty/incomplete cap ls response
+
+never sending PASS password
+
+random JOIN : at the start
+
+check how NICK and USER work really, default config username clash?
+
+PING PONG just echoed, fixed by itself??? lucky
+
+server needs to send ERROR when quitting
+sigint vs quit commend?
+
+hang and flush????? IMPORTANT
+
+handshake all done, implement actual features
