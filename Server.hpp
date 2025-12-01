@@ -31,11 +31,13 @@ private:
   int _channels_n;
 
   int _make_listen_socket(int port);
-  void _accept_new_clients(int listen_fd, pollfd *pfds);
-  void _handle_client_io(pollfd *pfds, int i);
-  void _compact_fds(pollfd *pfds);
+  void _accept_new_clients(int listen_fd);
+  void _handle_client_io(int i);
+  void _compact_fds();
   void _removeClientFromChannels(int fd);
   void _handle_stdin(void);
+
+  pollfd _pfds[Client::MAX_CLIENTS + 2];
 
 public:
   Server(int port, std::string password);
@@ -45,11 +47,13 @@ public:
   ~Server(void);
 
   void start(void);
+  void disconnect(int fd, std::string error);
   bool addChannel(Channel c);
   void removeChannel(std::string name);
   Channel *getChannel(std::string name);
   std::string getPassword(void);
   std::string getServerPrefix(void);
+  Client *getClientByNick(std::string nick);
 };
 
 #endif

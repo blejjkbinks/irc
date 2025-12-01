@@ -29,6 +29,9 @@ private:
   void _user_cmd(std::string line, Server &server);
   void _welcome(Server &server);
   void _cap(std::string line, Server &server);
+  void _privmsg(std::string line, Server &server);
+  void _quit(std::string line, Server &server);
+  void _ping(std::string line, Server &server);
 
 public:
   Client(void);
@@ -53,6 +56,7 @@ public:
   void setFd(int fd);
   bool isAuthenticated(void);
   void setAuthenticated(bool v);
+  void reset(void);
 
   void process_line(std::string line, Server &server, int index);
 };

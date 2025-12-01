@@ -9,6 +9,8 @@ Server::Server(int port, std::string password)
       _clients_n(0), _channels_n(0) {
   for (int i = 0; i < Client::MAX_CLIENTS; i++)
     _clients[i].setFd(-1);
+  for (int i = 0; i < Client::MAX_CLIENTS + 2; i++)
+    _pfds[i].fd = -1;
 }
 
 Server::Server(void)
@@ -87,7 +89,7 @@ int Server::_make_listen_socket(int port) {
   return (listen_fd);
 }
 
-void Server::_accept_new_clients(int listen_fd, pollfd *pfds) {
+void Server::_accept_new_clients(int listen_fd) {
   for (;;) {
     sockaddr_in client_addr;
     socklen_t len = sizeof(client_addr);
@@ -102,9 +104,10 @@ void Server::_accept_new_clients(int listen_fd, pollfd *pfds) {
     fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
 
     if (_clients_n < Client::MAX_CLIENTS) {
-      pfds[_clients_n + 2].fd = client_fd;
-      pfds[_clients_n + 2].events = POLLIN;
-      pfds[_clients_n + 2].revents = 0;
+      _pfds[_clients_n + 2].fd = client_fd;
+      _pfds[_clients_n + 2].events = POLLIN;
+      _pfds[_clients_n + 2].revents = 0;
+      _clients[_clients_n].reset();
       _clients[_clients_n].setFd(client_fd);
       _clients[_clients_n].buffer = "";
       _clients[_clients_n].setIndex(_clients_n + 1);
@@ -122,12 +125,20 @@ std::string Server::getPassword(void) { return this->_password; }
 
 std::string Server::getServerPrefix(void) { return (":" + _server_name); }
 
-void Server::_handle_client_io(pollfd *pfds, int i) {
-  int fd = pfds[i].fd;
+Client *Server::getClientByNick(std::string nick) {
+  for (int i = 0; i < _clients_n; i++) {
+    if (_clients[i].getNick() == nick)
+      return &_clients[i];
+  }
+  return NULL;
+}
+
+void Server::_handle_client_io(int i) {
+  int fd = _pfds[i].fd;
   if (fd < 0)
     return;
 
-  if (pfds[i].revents & (POLLIN | POLLERR | POLLHUP)) {
+  if (_pfds[i].revents & (POLLIN | POLLERR | POLLHUP)) {
     char buf[4000];
     ssize_t n = recv(fd, buf, sizeof(buf), 0);
     if (n > 0) {
@@ -149,20 +160,20 @@ void Server::_handle_client_io(pollfd *pfds, int i) {
         std::cout << i - 1 << " disconnected" << std::endl;
         _removeClientFromChannels(fd);
         close(fd);
-        pfds[i].fd = -1;
+        _pfds[i].fd = -1;
         _clients[i - 2].setFd(-1);
       }
     }
   }
 }
 
-void Server::_compact_fds(pollfd *pfds) {
+void Server::_compact_fds() {
   int new_nfds = 2;
   int current_nfds = _clients_n + 2;
   for (int i = 2; i < current_nfds; ++i) {
-    if (pfds[i].fd != -1) {
+    if (_pfds[i].fd != -1) {
       if (new_nfds != i) {
-        pfds[new_nfds] = pfds[i];
+        _pfds[new_nfds] = _pfds[i];
         _clients[new_nfds - 2] = _clients[i - 2];
         _clients[new_nfds - 2].setIndex(new_nfds - 1);
       }
@@ -177,6 +188,10 @@ void Server::_removeClientFromChannels(int fd) {
     Client c;
     c.setFd(fd);
     _channels[i].rmClient(c);
+    if (_channels[i].getClientsNumber() == 0) {
+      removeChannel(_channels[i].getName());
+      i--;
+    }
   }
 }
 
@@ -204,6 +219,23 @@ void Server::_handle_stdin(void) {
     std::cout << "Echo: " << line << std::endl;
 }
 
+void Server::disconnect(int fd, std::string error) {
+  for (int i = 2; i < _clients_n + 2; i++) {
+    if (_pfds[i].fd == fd) {
+      if (!error.empty()) {
+        std::string message = "ERROR :" + error + "\r\n";
+        send(fd, message.c_str(), message.size(), 0);
+      }
+      std::cout << i - 1 << " disconnected" << std::endl;
+      _removeClientFromChannels(fd);
+      close(fd);
+      _pfds[i].fd = -1;
+      _clients[i - 2].setFd(-1);
+      return;
+    }
+  }
+}
+
 void Server::start(void) {
   signal(SIGINT, handle_sigint);
 
@@ -214,40 +246,39 @@ void Server::start(void) {
     return;
   }
 
-  pollfd pfds[Client::MAX_CLIENTS + 2];
-  pfds[0].fd = listen_fd;
-  pfds[0].events = POLLIN;
-  pfds[1].fd = STDIN_FILENO;
-  pfds[1].events = POLLIN;
+  _pfds[0].fd = listen_fd;
+  _pfds[0].events = POLLIN;
+  _pfds[1].fd = STDIN_FILENO;
+  _pfds[1].events = POLLIN;
 
   std::cout << "server started" << std::endl;
 
   while (g_running) {
-    if (poll(pfds, _clients_n + 2, -1) < 0) {
+    if (poll(_pfds, _clients_n + 2, -1) < 0) {
       if (errno == EINTR)
         continue;
       std::cerr << "poll error: " << std::strerror(errno) << std::endl;
       break;
     }
 
-    if (pfds[0].revents & POLLIN)
-      _accept_new_clients(listen_fd, pfds);
+    if (_pfds[0].revents & POLLIN)
+      _accept_new_clients(listen_fd);
 
-    if (pfds[1].revents & POLLIN)
+    if (_pfds[1].revents & POLLIN)
       _handle_stdin();
 
     for (int i = 2; i < _clients_n + 2; ++i)
-      _handle_client_io(pfds, i);
+      _handle_client_io(i);
 
-    _compact_fds(pfds);
+    _compact_fds();
   }
 
   std::cout << "server shutting down" << std::endl;
   for (int i = 2; i < _clients_n + 2; ++i) {
-    if (pfds[i].fd != -1) {
+    if (_pfds[i].fd != -1) {
       std::string message = "server shutting down\r\n";
       _clients[i - 2].ft_send(message);
-      close(pfds[i].fd);
+      close(_pfds[i].fd);
     }
   }
 
