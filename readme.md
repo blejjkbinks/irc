@@ -118,12 +118,15 @@ hang and flush????? IMPORTANT
 handshake all done, implement actual features
 
 
+===========
 
 MARDI, issues to fix:
 
 "/user myname" send [userhost myname] instead of [USER myname], need to change command parsing
 
 add MODE feedback/debug
+
+testing checklist
 
 
 can ignore (?):
@@ -135,3 +138,5 @@ random [JOIN :] and [MODE usernname +i] during connection, how to handle? just i
 [MODE #channel b], explicitly ignore
 
 after changing nickname, sent messages still display old nickname on sender's client
+
+all logic in one(1) single cpp file, paris kids get mad??
