@@ -116,3 +116,22 @@ sigint vs quit commend?
 hang and flush????? IMPORTANT
 
 handshake all done, implement actual features
+
+
+
+MARDI, issues to fix:
+
+"/user myname" send [userhost myname] instead of [USER myname], need to change command parsing
+
+add MODE feedback/debug
+
+
+can ignore (?):
+
+random [JOIN :] and [MODE usernname +i] during connection, how to handle? just ignore and send back errors?
+
+[PONG ircserv ircserv] instead of [PONG ircserv], doesnt seem to matter anyways??
+
+[MODE #channel b], explicitly ignore
+
+after changing nickname, sent messages still display old nickname on sender's client
