@@ -76,8 +76,8 @@ int Server::_makeListenSocket(int port)
 		return (-1);
 	int yes = 1;
 	setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
-	int flags = fcntl(listen_fd, F_GETFL, 0);
-	fcntl(listen_fd, F_SETFL, flags | O_NONBLOCK);
+	//int flags = fcntl(listen_fd, F_GETFL, 0);
+	fcntl(listen_fd, F_SETFL, O_NONBLOCK);
 
 	sockaddr_in addr;
 	std::memset(&addr, 0, sizeof(addr));
@@ -112,8 +112,8 @@ void Server::_acceptNewClients(int listen_fd)
 			std::cerr << "accept error: " << std::strerror(errno) << std::endl;
 			break;
 		}
-		int flags = fcntl(client_fd, F_GETFL, 0);
-		fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
+		//int flags = fcntl(client_fd, F_GETFL, 0);
+		fcntl(client_fd, F_SETFL, O_NONBLOCK);
 
 		if (_clients_n < Client::MAX_CLIENTS)
 		{

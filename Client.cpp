@@ -141,6 +141,14 @@ void Client::_userCmd(std::string line, Server &server)
 			real_name.erase(real_name.size() - 1);
 		_name = real_name;
 	}
+	else
+	{
+		std::string real_name = line.substr(first_space + 1);
+		if (!real_name.empty() && real_name[real_name.size() - 1] == '\r')
+			real_name.erase(real_name.size() - 1);
+		if (!real_name.empty())
+			_name = real_name;
+	}
 	_welcome(server);
 }
 
@@ -244,7 +252,8 @@ void Client::_ping(std::string line, Server &server)
 	if (!token.empty() && token[token.size() - 1] == '\r')
 		token.erase(token.size() - 1);
 
-	std::string reply = "PONG " + server.getServerPrefix().substr(1) + " " + token + "\r\n";
+	//std::string reply = "PONG " + server.getServerPrefix().substr(1) + " " + token + "\r\n";
+	std::string reply = "PONG " + token + "\r\n";
 	ft_send(reply);
 }
 
@@ -305,7 +314,7 @@ void Client::processLine(std::string line, Server &server, int index)
 		return;
 	}
 
-	if (command == "USER")
+	if (command == "USER" || command == "userhost")
 	{
 		_userCmd(line, server);
 		return;

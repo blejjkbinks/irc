@@ -122,21 +122,23 @@ handshake all done, implement actual features
 
 MARDI, issues to fix:
 
-"/user myname" send [userhost myname] instead of [USER myname], need to change command parsing
+[x] "/user myname" send [userhost myname] instead of [USER myname], need to change command parsing
 
-add MODE feedback/debug
+[x] forbidden fcntl function call with the flags, need remove
 
-testing checklist
+[ ] add MODE feedback/debug
+
+[ ] testing checklist
 
 
 can ignore (?):
 
-random [JOIN :] and [MODE usernname +i] during connection, how to handle? just ignore and send back errors?
+[ ] random [JOIN :] and [MODE usernname +i] during connection, how to handle? just ignore and send back errors?
 
-[PONG ircserv ircserv] instead of [PONG ircserv], doesnt seem to matter anyways??
+[x] [PONG ircserv ircserv] instead of [PONG ircserv], doesnt seem to matter anyways??
 
-[MODE #channel b], explicitly ignore
+[ ] [MODE #channel b], explicitly ignore
 
-after changing nickname, sent messages still display old nickname on sender's client
+[ ] after changing nickname, sent messages still display old nickname on sender's client
 
-all logic in one(1) single cpp file, paris kids get mad??
+[ ] all logic in one(1) single cpp file, paris kids get mad??
