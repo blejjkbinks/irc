@@ -167,3 +167,5 @@ MERCREDI, issues to fix:
 [ ] NOTICE command
 
 [ ] include algorithm and vector in Channel.hpp, allowed???
+
+[ ] duplicate nicks not allowed, used to id a single client. nick command needs to check for duplicates and give error if relevant
