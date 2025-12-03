@@ -165,3 +165,5 @@ MERCREDI, issues to fix:
 [ ] replicate ctrl+D test from subject??
 
 [ ] NOTICE command
+
+[ ] include algorithm and vector in Channel.hpp, allowed???
