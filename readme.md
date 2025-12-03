@@ -142,3 +142,26 @@ can ignore (?):
 [ ] after changing nickname, sent messages still display old nickname on sender's client
 
 [ ] all logic in one(1) single cpp file, paris kids get mad??
+
+[ ] after server "quit"s, irssi seems stuck, not responding to "/help", maybe needs specific signals to register server shutdown
+	similarly, nc terminal on ubuntu sometimes shows "broken pipe", not good
+
+
+MERCREDI, issues to fix:
+
+[ ] Server.cpp, line:179, use of ERRNO after recv() call, eval sheet says not to. MARK 0!!!!
+	important because it's used to detect disconnect rn
+
+[ ] review implementation of kick + invite + topic + mode
+
+[ ] KICK
+
+[ ] INVITE
+
+[ ] TOPIC
+
+[ ] MODE
+
+[ ] replicate ctrl+D test from subject??
+
+[ ] NOTICE command
