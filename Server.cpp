@@ -107,9 +107,9 @@ void Server::_acceptNewClients(int listen_fd)
 		int client_fd = accept(listen_fd, (sockaddr *)&client_addr, &len);
 		if (client_fd < 0)
 		{
-			if (errno == EWOULDBLOCK || errno == EAGAIN)
-				break;
-			std::cerr << "accept error: " << std::strerror(errno) << std::endl;
+//			if (errno == EWOULDBLOCK || errno == EAGAIN)
+//				break;
+//			std::cerr << "accept error: " << std::strerror(errno) << std::endl;
 			break;
 		}
 		//int flags = fcntl(client_fd, F_GETFL, 0);
@@ -176,7 +176,7 @@ void Server::_handleClientIO(int i)
 		}
 		else
 		{
-			if (n == 0 || (n < 0 && errno != EWOULDBLOCK && errno != EAGAIN))
+			if (n == 0 || (n < 0))// && errno != EWOULDBLOCK && errno != EAGAIN))
 			{
 				std::cout << i - 1 << " disconnected" << std::endl;
 				_removeClientFromChannels(fd);
