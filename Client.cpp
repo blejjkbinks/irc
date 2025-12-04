@@ -99,7 +99,7 @@ void Client::_pass(std::string line, Server &server)
 
 void Client::_nickCmd(std::string line, Server &server)
 {
-	(void)server;
+	//(void)server;
 	size_t first_space = line.find(' ');
 	if (first_space == std::string::npos)
 	{
@@ -110,6 +110,11 @@ void Client::_nickCmd(std::string line, Server &server)
 	std::string nick = line.substr(first_space + 1);
 	if (!nick.empty() && nick[nick.size() - 1] == '\r')
 		nick.erase(nick.size() - 1);
+	if (server.getClientByNick(nick))
+	{
+		nick = "NICK " + nick + "1";
+		return (_nickCmd(nick, server));
+	}
 	_nick = nick;
 	_welcome(server);
 }
