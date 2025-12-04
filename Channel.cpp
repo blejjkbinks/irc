@@ -162,15 +162,58 @@ Client *Channel::getClient(int i)
     return (NULL);
 }
 
+const std::vector<std::string> &Channel::getOperators(void) const
+{
+    return _operators;
+}
+
+const std::vector<std::string> &Channel::getInvited(void) const
+{
+    return _invited;
+}
+
 std::ostream &operator<<(std::ostream &o, Channel &c)
 {
-    o << "Channel(name=" << c.getName() << ", topic=" << c.getTopic() << ", clients=[";
+    o << "Channel(name=" << c.getName()
+      << ", topic=\"" << c.getTopic() << "\"";
+    
+    o << ", modes=[";
+    if (c.getMode('i')) o << "+i";
+    if (c.getMode('t')) o << "+t";
+    if (c.getMode('k')) o << "+k";
+    if (c.getMode('l')) o << "+l";
+    o << "]";
+    
+    if (c.getMode('k'))
+        o << ", key=\"" << c.getKey() << "\"";
+    if (c.getMode('l'))
+        o << ", limit=" << c.getUserLimit();
+
+    o << ", operators=[";
+    const std::vector<std::string> &operators = c.getOperators();
+    for (size_t i = 0; i < operators.size(); ++i) {
+        o << operators[i];
+        if (i < operators.size() - 1)
+            o << " ";
+    }
+    o << "]";
+
+    o << ", invited=[";
+    const std::vector<std::string> &invited = c.getInvited();
+    for (size_t i = 0; i < invited.size(); ++i) {
+        o << invited[i];
+        if (i < invited.size() - 1)
+            o << " ";
+    }
+    o << "]";
+
+    o << ", clients=[";
     for (int i = 0; i < c.getClientsNumber(); i++)
-	{
+    {
         Client *cl = c.getClient(i);
         if (cl)
-		{
-            o << cl->getName();
+        {
+            o << cl->getNick();
             if (i < c.getClientsNumber() - 1)
                 o << " ";
         }

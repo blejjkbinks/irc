@@ -60,6 +60,9 @@ public:
 	void setMode(char mode, bool value);
 	bool getMode(char mode);
 	bool isFull(void);
+
+	const std::vector<std::string> &getOperators(void) const;
+	const std::vector<std::string> &getInvited(void) const;
 };
 
 std::ostream &operator<<(std::ostream &o, Channel &c);
