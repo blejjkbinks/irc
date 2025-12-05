@@ -172,6 +172,16 @@ const std::vector<std::string> &Channel::getInvited(void) const
     return _invited;
 }
 
+bool Channel::hasMember(const std::string &nick)
+{
+    for (int i = 0; i < _clients_n; i++)
+    {
+        if (_clients[i].getNick() == nick)
+            return true;
+    }
+    return false;
+}
+
 std::ostream &operator<<(std::ostream &o, Channel &c)
 {
     o << "Channel(name=" << c.getName()

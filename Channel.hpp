@@ -61,6 +61,8 @@ public:
 	bool getMode(char mode);
 	bool isFull(void);
 
+	bool hasMember(const std::string &nick);
+
 	const std::vector<std::string> &getOperators(void) const;
 	const std::vector<std::string> &getInvited(void) const;
 };

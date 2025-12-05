@@ -217,8 +217,10 @@ void Client::_privmsg(std::string line, Server &server)
 	if (target[0] == '#')
 	{
 		Channel *channel = server.getChannel(target);
-		if (channel)
+		if (channel && channel->hasMember(this->_nick))
 			channel->broadcast(full_message, *this);
+		else if (channel)
+			ft_send("442 " + channel->getName() + " :Not on channel\r\n");
 		else
 			ft_send("401 " + target + " :No such nick/channel\r\n");
 	}
@@ -346,7 +348,7 @@ void Client::processLine(std::string line, Server &server, int index)
 		_mode(line, server);
 	else if (command == "AUTH")
 		_auth(line, server);
-	else if (command == "PRIVMSG")
+	else if (command == "PRIVMSG" || command == "NOTICE")
 		_privmsg(line, server);
 	else if (command == "QUIT")
 		_quit(line, server);
@@ -393,9 +395,21 @@ void Client::_join(std::string line, Server &server)
 		ft_send("461 JOIN :Not enough parameters\r\n");
 		return;
 	}
-	std::string channel_name = line.substr(first_space + 1);
+	size_t second_space = line.find(' ', first_space + 1);
+	std::string channel_name;
+	std::string key;
+	if (second_space == std::string::npos)
+	{
+		channel_name = line.substr(first_space + 1);
+	}
+	else
+	{
+		channel_name = line.substr(first_space + 1, second_space - (first_space + 1));
+		key = line.substr(second_space + 1);
+	}
 	if (!channel_name.empty() && channel_name[channel_name.size() - 1] == '\r')
 		channel_name.erase(channel_name.size() - 1);
+	//trailing \r in key string?
 
 	if (channel_name[0] != '#')
 	{
@@ -440,10 +454,6 @@ void Client::_join(std::string line, Server &server)
 		}
 		if (channel->getMode('k'))
 		{
-			std::string key = "";
-			size_t second_space = line.find(' ', first_space + 1);
-			if (second_space != std::string::npos)
-				key = line.substr(second_space + 1);
 			if (key != channel->getKey())
 			{
 				ft_send("475 " + channel_name + " :Cannot join channel (+k)\r\n");
